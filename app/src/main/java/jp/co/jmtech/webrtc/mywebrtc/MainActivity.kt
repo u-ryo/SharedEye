@@ -1,5 +1,6 @@
 package jp.co.jmtech.webrtc.mywebrtc
 
+import android.app.Activity
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.support.v7.app.AppCompatActivity
@@ -12,9 +13,10 @@ import com.inaka.killertask.KillerTask
 import kotlinx.android.synthetic.main.activity_main.*
 
 import org.xwalk.core.XWalkActivity
+import org.xwalk.core.XWalkPreferences
 import org.xwalk.core.XWalkView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
     //public class MainActivity extends XWalkActivity {
 
     //    private WebView mWebView;
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
     ////        mXWalkView.load("http://crosswalk-project.org/", null);
     //        mXWalkView.load("file:///android_asset/www/talk.html", null);
     //    }
+
+    lateinit var formattedIpAddress: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +43,15 @@ class MainActivity : AppCompatActivity() {
 //        mXWalkView = findViewById(R.id.activity_main_webview) as XWalkView
         //        mXWalkView.load("file:///android_asset/www/talk.html", null);
 //        mXWalkView!!.load("http://192.168.33.176:8888/", null)
-        KillerTask(
-                { SignalingHttpServer().startServer() }
-        ).go()
-        activity_main_webview.load("file:///android_asset/www/talk.html", null)
+        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val ipAddress = wifiManager.connectionInfo.ipAddress
+        formattedIpAddress = String.format("%d.%d.%d.%d", ipAddress and 0xff, ipAddress shr 8 and 0xff,
+                ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff)
+        Toast.makeText(this, formattedIpAddress, Toast.LENGTH_LONG).show()
+        KillerTask({ SignalingHttpServer(8888, WebListenerImpl(this)).start() })
+                .go()
+        XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true)
+        activity_main_webview.load("file:///android_asset/www/broadcaster.html", null)
     }
 
     override fun onBackPressed() {
@@ -53,12 +62,11 @@ class MainActivity : AppCompatActivity() {
         //        }
     }
 
-    public override fun onResume() {
+    override fun onResume() {
         super.onResume()
-        val wifiManager = getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val ipAddress = wifiManager.connectionInfo.ipAddress
-        val formatedIpAddress = String.format("%d, %d.%d.%d.%d", ipAddress, ipAddress and 0xff, ipAddress shr 8 and 0xff,
-                ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff)
-        Toast.makeText(this, formatedIpAddress, Toast.LENGTH_LONG).show()
     }
+
+//    fun getOfferSpd() : String {
+//        activity_main_webview.evaluateJavascript("")
+//    }
 }
