@@ -11,20 +11,20 @@ import java.util.concurrent.TimeUnit
 class WebListenerImpl(activity: MainActivity) : WebListener {
     val activity: MainActivity = activity
     lateinit var offerSdp: String
-    val wait: Long = 3
+    val wait: Long = 2
 
     init {
         Thread.sleep(TimeUnit.SECONDS.toMillis(wait))
-        Handler(Looper.getMainLooper()).post(Runnable {
+        Handler(Looper.getMainLooper()).post {
             activity.activity_main_webview.evaluateJavascript(
                     "makeOffer()", null)
-        })
+        }
         Thread.sleep(TimeUnit.SECONDS.toMillis(wait))
-        Handler(Looper.getMainLooper()).post(Runnable {
+        Handler(Looper.getMainLooper()).post {
             activity.activity_main_webview.evaluateJavascript(
                     "getOfferSdp();",
                     { sdp -> offerSdp = sdp })
-        })
+        }
     }
 
     override fun getOffer(): String {
@@ -35,8 +35,10 @@ class WebListenerImpl(activity: MainActivity) : WebListener {
     }
 
     override fun setAnswer(sdp: String) {
-        activity.activity_main_webview.evaluateJavascript(
-                "setAnswer(" + sdp + ")", null)
+        Handler(Looper.getMainLooper()).post {
+            activity.activity_main_webview.evaluateJavascript(
+                    "setAnswer(" + sdp + ")", null)
+        }
     }
 
     override fun getIp(): String {

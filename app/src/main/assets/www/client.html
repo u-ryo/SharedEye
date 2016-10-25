@@ -83,9 +83,7 @@
       localStream = stream;
       playVideo(localVideo, stream);
 
-      var offerSdp = getOffer();
-      let offer = new RTCSessionDescription(offerSdp);
-      setOffer(offer);
+      getOffer();
     }).catch(function (error) { // error
       console.error('getUserMedia error:', error);
       return;
@@ -151,13 +149,17 @@
 
   function getOffer() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/offer', false);
+    xhr.open('GET', '/offer');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        console.log('xhr.responseText:' + xhr.responseText);
+        var offerSdp = JSON.parse(xhr.responseText);
+        let offer = new RTCSessionDescription(offerSdp);
+        textToReceiveSdp.value = offerSdp.sdp;
+        setOffer(offer);
+      }
+    };
     xhr.send();
-    if (xhr.status == 200) {
-      console.log('xhr.responseText:' + xhr.responseText);
-      return xhr.responseText;
-    }
-    return "";
   }
 
   // ----- hand signaling ----
@@ -178,7 +180,7 @@
       });
       setOffer(offer);
     }
-    textToReceiveSdp.value ='';
+//    textToReceiveSdp.value ='';
   }
  
   function sendSdp(sessionDescription) {
@@ -199,6 +201,7 @@
 
   function sendMessage(uri, message) {
     var xhr = new XMLHttpRequest();
+    xhr.timeout = 0;
     xhr.open('POST', uri);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(message);
@@ -324,11 +327,11 @@
   
   function makeAnswer() {
     console.log('sending Answer. Creating remote session description...' );
-    if (! peerConnection) {
+    if (!peerConnection) {
       console.error('peerConnection NOT exist!');
       return;
     }
-    
+
     peerConnection.createAnswer()
     .then(function (sessionDescription) {
       console.log('createAnswer() succsess in promise');
@@ -345,7 +348,7 @@
   }
 
   function setAnswer(sessionDescription) {
-    if (! peerConnection) {
+    if (!peerConnection) {
       console.error('peerConnection NOT exist!');
       return;
     }
@@ -360,11 +363,10 @@
   
   // start PeerConnection
   function connect() {
-    if (! peerConnection) {
+    if (!peerConnection) {
       console.log('make Offer');
       makeOffer();
-    }
-    else {
+    } else {
       console.warn('peer already exist.');
     }
   }
@@ -376,10 +378,10 @@
       peerConnection.close();
       peerConnection = null;
       pauseVideo(remoteVideo);
-    }
-    else {
+    } else {
       console.warn('peer NOT exist.');
     }
   }
+  startVideo();
 </script>
 </html>

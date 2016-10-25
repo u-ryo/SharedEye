@@ -48,7 +48,7 @@ class MainActivity : Activity() {
         formattedIpAddress = String.format("%d.%d.%d.%d", ipAddress and 0xff, ipAddress shr 8 and 0xff,
                 ipAddress shr 16 and 0xff, ipAddress shr 24 and 0xff)
         Toast.makeText(this, formattedIpAddress, Toast.LENGTH_LONG).show()
-        KillerTask({ SignalingHttpServer(8888, WebListenerImpl(this)).start() })
+        KillerTask({ SignalingHttpServer(8888, WebListenerImpl(this)).start(30000, false) })
                 .go()
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true)
         activity_main_webview.load("file:///android_asset/www/broadcaster.html", null)

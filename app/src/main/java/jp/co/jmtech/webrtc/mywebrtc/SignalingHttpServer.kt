@@ -26,20 +26,29 @@ class SignalingHttpServer(port: Int, listener: WebListener): NanoWSD(port) {
                                                 + ":" + port))
             }
             "/ws" -> return super.serve(session)
-            "/offer" -> {
-                Log.d("offer:", listener.getOffer())
-                return NanoHTTPD.newFixedLengthResponse(
-                        Response.Status.OK, "application/json",
-                        listener.getOffer())
-            }
+            "/offer" -> return NanoHTTPD.newFixedLengthResponse(
+                    Response.Status.OK, "application/json",
+                    listener.getOffer())
             "/answer" -> {
-                val body = session.inputStream
-                        .reader(Charsets.UTF_8)
-                        .readText()
-                listener.setAnswer(body)
-                return NanoHTTPD.newChunkedResponse(
-                        Response.Status.NO_CONTENT,
-                        "text/plain", null)
+                try {
+                    val contentLength =
+                            session.headers["content-length"]?.toInt()
+                    val b = ByteArray(if (contentLength == null) 0 else contentLength.toInt())
+                    session.inputStream.read(b, 0, b.size)
+                    val body = String(b)
+//                    val body = session.inputStream.readBytes(
+//                            if (contentLength == null) 0 else contentLength.toInt()).toString()
+//                val body = session.inputStream
+//                        .reader(Charsets.UTF_8)
+//                        .readText()
+                    listener.setAnswer(body)
+                    return NanoHTTPD.newChunkedResponse(
+                            Response.Status.NO_CONTENT,
+                            "text/plain", null)
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                    return NanoHTTPD.newFixedLengthResponse(e.toString())
+                }
             }
             else -> return NanoHTTPD.newChunkedResponse(
                     Response.Status.NO_CONTENT,
