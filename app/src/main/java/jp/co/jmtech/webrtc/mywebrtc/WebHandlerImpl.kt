@@ -32,7 +32,7 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
     override fun setAnswer(sdp: String) {
         Handler(Looper.getMainLooper()).post {
             activity.activity_main_webview.evaluateJavascript(
-                    "setAnswer(" + sdp + ")", null)
+                    "setAnswer(" + sdp + ");makeOffer()", null)
         }
     }
 
