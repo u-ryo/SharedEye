@@ -3,28 +3,23 @@ package jp.co.jmtech.webrtc.mywebrtc
 import android.os.Handler
 import android.os.Looper
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.concurrent.TimeUnit
+import org.xwalk.core.JavascriptInterface
 
 /**
  * Created by u-ryo on 16/10/21.
  */
-class WebListenerImpl(activity: MainActivity) : WebListener {
-    val activity: MainActivity = activity
+class WebHandlerImpl(val activity: MainActivity) : WebHandler {
     lateinit var offerSdp: String
-    val wait: Long = 2
 
-    init {
-        Thread.sleep(TimeUnit.SECONDS.toMillis(wait))
-        Handler(Looper.getMainLooper()).post {
-            activity.activity_main_webview.evaluateJavascript(
-                    "makeOffer()", null)
-        }
-        Thread.sleep(TimeUnit.SECONDS.toMillis(wait))
-        Handler(Looper.getMainLooper()).post {
-            activity.activity_main_webview.evaluateJavascript(
-                    "getOfferSdp();",
-                    { sdp -> offerSdp = sdp })
-        }
+    @JavascriptInterface
+    fun setOffer(offerSdp: String) {
+        this.offerSdp = offerSdp
+    }
+
+    @JavascriptInterface
+    fun getUrl() : String {
+        return "https://" + activity.formattedIpAddress +
+                ":" + activity.port + "/"
     }
 
     override fun getOffer(): String {
