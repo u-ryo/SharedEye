@@ -1,4 +1,4 @@
-package jp.co.jmtech.webrtc.mywebrtc
+package jp.co.jmtech.webrtc.sharedeye
 
 import android.app.Activity
 import android.content.Context
@@ -16,7 +16,6 @@ import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLServerSocketFactory
 
 class MainActivity : Activity() {
-
     lateinit var formattedIpAddress: String
     val port = BuildConfig.PORT
     val timeout = TimeUnit.SECONDS.toMillis(BuildConfig.TIMEOUT).toInt()
@@ -30,15 +29,7 @@ class MainActivity : Activity() {
         val handler = WebHandlerImpl(this)
         activity_main_webview.addJavascriptInterface(handler, "handler")
 
-        val wifiManager =
-                getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val ipAddress = wifiManager.connectionInfo.ipAddress
-        formattedIpAddress =
-                String.format("%d.%d.%d.%d",
-                        ipAddress and 0xff,
-                        ipAddress shr 8 and 0xff,
-                        ipAddress shr 16 and 0xff,
-                        ipAddress shr 24 and 0xff)
+        formattedIpAddress = getIp()
         val factory = getKeystoreFactory(BuildConfig.PASSWORD.toCharArray())
         object : AsyncTask<Unit, Unit, Unit>() {
             override fun doInBackground(vararg p0: Unit?) {
@@ -51,6 +42,17 @@ class MainActivity : Activity() {
                 }
             }
         }.execute()
+    }
+
+    fun getIp() : String {
+        val wifiManager =
+                getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val ipAddress = wifiManager.connectionInfo.ipAddress
+        return String.format("%d.%d.%d.%d",
+                ipAddress and 0xff,
+                ipAddress shr 8 and 0xff,
+                ipAddress shr 16 and 0xff,
+                ipAddress shr 24 and 0xff)
     }
 
     private fun getKeystoreFactory(passphrase: CharArray) : SSLServerSocketFactory {

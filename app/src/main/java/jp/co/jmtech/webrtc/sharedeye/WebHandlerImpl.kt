@@ -1,7 +1,8 @@
-package jp.co.jmtech.webrtc.mywebrtc
+package jp.co.jmtech.webrtc.sharedeye
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import org.xwalk.core.JavascriptInterface
 
@@ -18,8 +19,13 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
 
     @JavascriptInterface
     fun getUrl() : String {
-        return "https://" + activity.formattedIpAddress +
-                ":" + activity.port + "/"
+        val ip = activity.getIp()
+        val message = if (ip == "0.0.0.0") {
+            "Please connect using WIFI."
+        } else {
+            "https://" + ip + ":" + activity.port + "/"
+        }
+        return message
     }
 
     override fun getOffer(): String {
@@ -33,6 +39,14 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
         Handler(Looper.getMainLooper()).post {
             activity.activity_main_webview.evaluateJavascript(
                     "setAnswer(" + sdp + ");makeOffer()", null)
+        }
+    }
+
+    override fun setImage(imageData: String) {
+        Log.d("imageData:", imageData)
+        Handler(Looper.getMainLooper()).post {
+            activity.activity_main_webview.evaluateJavascript(
+                    "setImage(\"" + imageData + "\")", null)
         }
     }
 

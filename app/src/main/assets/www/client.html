@@ -1,13 +1,35 @@
 <!doctype html>
 <html>
 <head>
- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <title>WebSocket Signaling 1to1</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Shared Eye</title>
+    <style type="text/css">
+        #container div { width:49%;margin:0;padding:0;float:left; }
+        canvas { cursor:default; border:solid; }
+
+    </style>
+    <script>
+    </script>
 </head>
 <body>
-  <div>
-    <video id="remote_video" autoplay style="width: 50%;"></video>
-  </div>
+<div id="container">
+    <div id="video_container">
+        <button id="captureButton" onclick="captureVideo()">Capture</button>
+        <br/>
+        <video id="remote_video" autoplay></video>
+    </div>
+    <div id="canvas_container">
+        <button id="send_button" onclick="sendImage()">Send</button>
+        <br/>
+        <p id="usage">←「Capture」ボタンを押して画面キャプチャ、その後こちらで指示描画後、「Send」を押してクライアントに送信します。</p>
+        <canvas id="capture_canvas"
+                onmousedown="startDraw(this,event)"
+                onmousemove="draw(this,event)"
+                onmouseup="finishDraw()"
+                onmouseleave="finishDraw()">
+        </canvas>
+    </div>
+</div>
 </body>
 <script type="text/javascript">
   let remoteVideo = document.getElementById('remote_video');
@@ -39,12 +61,12 @@
       return navigator.mediaDevices.getUserMedia(option);
     } else {
       console.log('wrap navigator.getUserMadia with Promise');
-      return new Promise(function(resolve, reject){    
+      return new Promise(function(resolve, reject){
         navigator.getUserMedia(option,
           resolve,
           reject
         );
-      });      
+      });
     }
   }
 
@@ -55,7 +77,7 @@
       element.src = window.URL.createObjectURL(stream);
     }
     element.play();
-    element.volume = 0;
+    element.volume = 0.5;
   }
 
   function getOffer() {
@@ -90,22 +112,22 @@
       setOffer(offer);
     }
   }
- 
+
   function sendSdp(sessionDescription) {
     console.log('---sending sdp ---');
     let message = JSON.stringify(sessionDescription);
-    console.log('sending SDP=' + message);
-    sendMessage('/answer', message);
+    //console.log('sending SDP=' + message);
+    sendMessage('/answer', 'application/json', message);
   }
 
-  function sendMessage(uri, message) {
+  function sendMessage(uri, mimeType, message) {
     var xhr = new XMLHttpRequest();
     xhr.timeout = 0;
     xhr.open('POST', uri);
-    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Content-Type', mimeType);
     xhr.send(message);
     console.log('message sent.');
-    console.log(message);
+    //console.log(message);
   }
 
   // ---------------------- connection handling -----------------------
@@ -167,7 +189,7 @@
     peer.onicegatheringstatechange = function() {
       console.log('==***== ice gathering state=' + peer.iceGatheringState);
     };
-    
+
     peer.onconnectionstatechange = function() {
       console.log('==***== connection state=' + peer.connectionState);
     };
@@ -175,8 +197,8 @@
     peer.onremovestream = function(event) {
       console.log('-- peer.onremovestream()');
     };
-    
-    
+
+
     // -- add local stream --
     if (localStream) {
       console.log('Adding local stream...');
@@ -217,7 +239,7 @@
       console.error('setRemoteDescription(offer) ERROR: ', err);
     });
   }
-  
+
   function makeAnswer() {
     console.log('sending Answer. Creating remote session description...' );
     if (!peerConnection) {
@@ -263,5 +285,54 @@
   }
 
   startVideo();
+
+
+  var drawing = false;
+  var sx = 0;
+  var sy = 0;
+  var LINE_WIDTH = 2;
+  var LINE_COLOR = 'rgb(255, 0, 0)';
+  var video = document.getElementById('remote_video');
+  var canvas = document.getElementById('capture_canvas');
+
+  var captureVideo = function() {
+    var ctx = canvas.getContext('2d');
+    document.getElementById('usage').style.display='none';
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    return ctx.drawImage(video, 0, 0);
+  }
+  var startDraw = function(canvas, e) {
+    drawing = true;
+    sx = e.pageX - canvas.offsetLeft;
+    sy = e.pageY - canvas.offsetTop;
+    return false;
+  }
+  var draw = function(canvas, e) {
+    var ctx, ex, ey;
+    if (drawing) {
+      ctx = canvas.getContext('2d');
+      ex = e.pageX - canvas.offsetLeft;
+      ey = e.pageY - canvas.offsetTop;
+      ctx.lineWidth = LINE_WIDTH;
+      ctx.strokeStyle = LINE_COLOR;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+      ctx.closePath();
+      sx = ex;
+      sy = ey;
+    }
+    return false;
+  }
+  var finishDraw = function() {
+    drawing = false;
+    return false;
+  }
+  var sendImage = function() {
+    var image = canvas.toDataURL('image/png');
+    sendMessage('/image', 'application/x-www-form-urlencoded', image);
+  }
 </script>
 </html>
