@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+    defaultConfig {
+        applicationId "jp.co.jmtech.webrtc.sharedeye"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        buildConfigField "int", "PORT", "${port}"
+        buildConfigField "long", "TIMEOUT", "${timeout}"
+        buildConfigField "String", "PASSWORD", "${password}"
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+//    compile files('libs/xwalk_core_library_java.jar')
+    compile 'org.xwalk:xwalk_core_library:19.49.514.5'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    def nanohttpdVersion = '2.3.1'
+    compile "org.nanohttpd:nanohttpd:$nanohttpdVersion"
+}
+repositories {
+    mavenCentral()
+}
