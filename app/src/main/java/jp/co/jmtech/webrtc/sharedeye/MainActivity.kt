@@ -6,6 +6,7 @@ import android.net.wifi.WifiManager
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -23,6 +24,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true)
         activity_main_webview.load("file:///android_asset/www/broadcaster.html", null)

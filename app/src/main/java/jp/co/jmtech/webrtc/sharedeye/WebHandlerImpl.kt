@@ -5,6 +5,7 @@ import android.os.Looper
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import org.xwalk.core.JavascriptInterface
+import org.xwalk.core.XWalkView
 
 /**
  * Created by u-ryo on 16/10/21.
@@ -26,6 +27,13 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
             "https://" + ip + ":" + activity.port + "/"
         }
         return message
+    }
+
+    @JavascriptInterface
+    fun reload() {
+        Handler(Looper.getMainLooper()).post {
+            activity.activity_main_webview.reload(XWalkView.RELOAD_IGNORE_CACHE)
+        }
     }
 
     override fun getOffer(): String {

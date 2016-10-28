@@ -8,15 +8,15 @@
         #remote_video { width:0px; height:0px; }
         #url { font-size:xx-large;word-break:break-all;margin:0px; }
         #image, #restart { display:none; }
-        body { -webkit-text-size-adjust: 100%; }
+        body { -webkit-text-size-adjust: 100%; padding: 0px; margin: 0px }
     </style>
 </head>
 <body>
-<video id="remote_video" autoplay></video>
+<audio id="remote_video" autoplay></audio>
 <div id="display_URL">
     <p id="prologue">Please access to:</p>
     <p id="url"></p>
-    <button id="restart" onclick="startVideo()">RESTART</button>
+    <button id="restart" onclick="restart()">RESTART</button>
 </div>
 <img id="image"/>
 </body>
@@ -182,7 +182,7 @@
     var url = handler.getUrl();
     urlParagraph.innerHTML = url;
     if (url.indexOf('http') != 0) {
-      var restart =       document.getElementById('restart');
+      var restart = document.getElementById('restart');
       restart.style.display = 'inline';
       restart.focus();
     }
@@ -191,8 +191,12 @@
   function setImage(imageData) {
     document.getElementById('display_URL').style.display = 'none';
     document.getElementById('image').style.display = 'inline';
-    document.getElementById('image').style.width = '100%';
+    document.getElementById('image').style.height = '290px';
     document.getElementById('image').src = imageData;
+  }
+
+  function restart() {
+    handler.reload();
   }
 
   startVideo();

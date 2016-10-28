@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!--<WebView-->
     <org.xwalk.core.XWalkView
         android:id="@+id/activity_main_webview"
         android:layout_width="match_parent"
