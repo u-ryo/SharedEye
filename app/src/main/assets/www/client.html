@@ -6,7 +6,6 @@
     <style type="text/css">
         #container div { width:49%;margin:0;padding:0;float:left; }
         canvas { cursor:default; border:solid; }
-
     </style>
     <script>
     </script>
@@ -16,6 +15,7 @@
     <div id="video_container">
         <button id="captureButton" onclick="captureVideo()">Capture</button>
         <br/>
+        <p id="reload_caution">いつまでもここにビデオが出ない時は、リロードしてみて下さい。</p>
         <video id="remote_video" autoplay></video>
     </div>
     <div id="canvas_container">
@@ -25,8 +25,12 @@
         <canvas id="capture_canvas"
                 onmousedown="startDraw(this,event)"
                 onmousemove="draw(this,event)"
-                onmouseup="finishDraw()"
-                onmouseleave="finishDraw()">
+                onmouseup="finishDraw(event)"
+                onmouseleave="finishDraw(event)"
+                ontouchstart="startDraw(this,event)"
+                ontouchmove="draw(this,event)"
+                ontouchend="finishDraw(event)"
+        >
         </canvas>
     </div>
 </div>
@@ -78,6 +82,15 @@
     }
     element.play();
     element.volume = 0.5;
+    document.getElementById('reload_caution').style.display = 'none';
+
+    if (remoteVideo.videoWidth > remoteVideo.videoHieght) {
+      remoteVideo.style.width = '100%';
+      remoteVideo.style.height = 'auto';
+    } else {
+      remoteVideo.style.height = '100%';
+      remoteVideo.style.width = 'auto';
+    }
   }
 
   function getOffer() {
@@ -303,13 +316,19 @@
     return ctx.drawImage(video, 0, 0);
   }
   var startDraw = function(canvas, e) {
+    e.preventDefault();
+    e.stopPropagation();
     drawing = true;
+    if (!e.pageX) e = e.changedTouches[0];
     sx = e.pageX - canvas.offsetLeft;
     sy = e.pageY - canvas.offsetTop;
     return false;
   }
   var draw = function(canvas, e) {
     var ctx, ex, ey;
+    e.preventDefault();
+    e.stopPropagation();
+    if (!e.pageX) e = e.changedTouches[0];
     if (drawing) {
       ctx = canvas.getContext('2d');
       ex = e.pageX - canvas.offsetLeft;
@@ -326,7 +345,9 @@
     }
     return false;
   }
-  var finishDraw = function() {
+  var finishDraw = function(e) {
+    e.preventDefault();
+    e.stopPropagation();
     drawing = false;
     return false;
   }

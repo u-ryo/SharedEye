@@ -3,9 +3,8 @@ package jp.co.jmtech.webrtc.sharedeye
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.activity_main_webview
 import org.xwalk.core.JavascriptInterface
-import org.xwalk.core.XWalkView
 
 /**
  * Created by u-ryo on 16/10/21.
@@ -22,21 +21,14 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
     fun getUrl() : String {
         val ip = activity.getIp()
         val message = if (ip == "0.0.0.0") {
-            "Please connect using WIFI."
+            "After connecting to WIFI, \"RESTART\" or using https://appear.in/."
         } else {
             "https://" + ip + ":" + activity.port + "/"
         }
         return message
     }
 
-    @JavascriptInterface
-    fun reload() {
-        Handler(Looper.getMainLooper()).post {
-            activity.activity_main_webview.reload(XWalkView.RELOAD_IGNORE_CACHE)
-        }
-    }
-
-    override fun getOffer(): String {
+    override fun getOffer() : String {
         return offerSdp
                 .replace(Regex("^\"(.*)\"$"), "$1")
                 .replace("\\\"", "\"")

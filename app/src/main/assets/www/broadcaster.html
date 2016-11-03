@@ -8,10 +8,11 @@
         #remote_video { width:0px; height:0px; }
         #url { font-size:xx-large;word-break:break-all;margin:0px; }
         #image, #restart { display:none; }
-        body { -webkit-text-size-adjust: 100%; padding: 0px; margin: 0px }
+        body { -webkit-text-size-adjust: 100%; padding: 0px; margin: 0px; height: 100%; }
+        html { height: 100%; margin: 0; }
     </style>
 </head>
-<body>
+<body id="body">
 <audio id="remote_video" autoplay></audio>
 <div id="display_URL">
     <p id="prologue">Please access to:</p>
@@ -25,6 +26,7 @@
   let localStream = null;
   let peerConnection = null;
   let urlParagraph = document.getElementById('url');
+  let url = null;
 
   // --- prefix -----
   navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia;
@@ -33,12 +35,11 @@
 
   // ---------------------- media handling ----------------------- 
   // start local video
-  function startVideo() {
-    getDeviceStream({video: true, audio: true})
+  function startVideo(videoSourceId) {
+    getDeviceStream({video: {optional: [{ sourceId: videoSourceId }]}, audio: true})
     .then(function (stream) { // success
       localStream = stream;
       makeOffer();
-      displayURL();
     }).catch(function (error) { // error
       console.error('getUserMedia error:', error);
       return;
@@ -179,26 +180,64 @@
   }
 
   function displayURL() {
-    var url = handler.getUrl();
     urlParagraph.innerHTML = url;
+    var restart = document.getElementById('restart');
     if (url.indexOf('http') != 0) {
-      var restart = document.getElementById('restart');
       restart.style.display = 'inline';
       restart.focus();
+    } else {
+      restart.style.display = 'none';
     }
   }
 
   function setImage(imageData) {
     document.getElementById('display_URL').style.display = 'none';
-    document.getElementById('image').style.display = 'inline';
-    document.getElementById('image').style.height = '290px';
-    document.getElementById('image').src = imageData;
+    let image = document.getElementById('image');
+    image.style.display = 'inline';
+    let body = document.getElementById('body');
+    image.src = imageData;
+    if (body.offsetWidth > body.offsetHeight) {
+      image.style.height = '100%';
+      image.style.width = 'auto';
+    } else {
+      image.style.width = '100%';
+      image.style.height = 'auto';
+    }
   }
 
   function restart() {
-    handler.reload();
+    hangUp();
+    selectVideo();
   }
 
-  startVideo();
+  // close PeerConnection
+  function hangUp() {
+    if (peerConnection) {
+      console.log('Hang up.');
+      peerConnection.close();
+      peerConnection = null;
+    } else {
+      console.warn('peer NOT exist.');
+    }
+  }
+
+  function selectVideo() {
+    MediaStreamTrack.getSources(function(sourceInfos) {
+      let videoSourceId = 'default';
+      sourceInfos.forEach(function(sourceInfo) {
+        if (sourceInfo.kind === 'video'
+         && sourceInfo.facing === 'environment') {
+          videoSourceId = sourceInfo.id;
+        }
+      });
+      url = handler.getUrl();
+      if (url.indexOf('http') === 0) {
+        startVideo(videoSourceId);
+      }
+      displayURL();
+    });
+  }
+
+  selectVideo();
 </script>
 </html>
