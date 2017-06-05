@@ -6,7 +6,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "jp.co.jmtech.webrtc.sharedeye"
+        applicationId "bz.mydns.walt.webrtc.sharedeye"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
