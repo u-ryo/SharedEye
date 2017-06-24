@@ -8,16 +8,12 @@ import fi.iki.elonen.NanoHTTPD
  * Created by u-ryo on 16/10/14.
  */
 
-class SignalingHttpServer(val port: Int, val handler: WebHandler) : NanoHTTPD(port) {
+class SignalingHttpServer(port: Int, val handler: WebHandler) : NanoHTTPD(port) {
     override fun serve(session: IHTTPSession) : Response {
         when (session.uri) {
             "/" -> {
                 handler.getOffer()
-                return newFixedLengthResponse(
-                        handler.getFile("www/client.html")
-                                .replace("ws://localhost:8888",
-                                        "ws://" + handler.getIp()
-                                                + ":" + port))
+                return newFixedLengthResponse(handler.getFile("www/client.html"))
             }
             "/offer" -> return NanoHTTPD.newFixedLengthResponse(
                     Response.Status.OK, "application/json",
@@ -29,7 +25,7 @@ class SignalingHttpServer(val port: Int, val handler: WebHandler) : NanoHTTPD(po
                             Response.Status.NO_CONTENT,
                             "text/plain", null)
                 } catch (e : Exception) {
-                    e.printStackTrace()
+                    Log.e("SignalingHttpServer", "In /answer", e)
                     return NanoHTTPD.newFixedLengthResponse(e.toString())
                 }
             }
@@ -51,9 +47,6 @@ class SignalingHttpServer(val port: Int, val handler: WebHandler) : NanoHTTPD(po
         var contentLength =
                 session.headers["content-length"]?.toInt()
         if (contentLength == null) contentLength = 0
-//        val b = ByteArray(if (contentLength == null) 0 else contentLength)
-//        session.inputStream.read(b, 0, b.size)
-//        return String(b)
         val b = ByteArray(10240)
         var readBytes = session.inputStream.read(b, 0,
                 Math.min(b.size, contentLength))
