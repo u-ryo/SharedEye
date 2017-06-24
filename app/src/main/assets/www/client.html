@@ -15,7 +15,10 @@
     <div id="left_container">
         <button id="captureButton" onclick="captureVideo()">Capture</button>
         <br/>
-        <p id="reload_caution">いつまでもここにビデオが出ない時は、リロードしてみて下さい。</p>
+        <p id="reload_caution">
+            いつまでもここにビデオが出ない時は、リロードしてみて下さい。
+            Please reload when the video doesn't start for a long time.
+        </p>
         <div id="video_container">
             <video id="remote_video" autoplay></video>
         </div>
@@ -23,7 +26,12 @@
     <div id="right_container">
         <button id="send_button" onclick="sendImage()">Send</button>
         <br/>
-        <p id="usage">←「Capture」ボタンを押して画面キャプチャ、その後こちらで指示描画後、「Send」を押してクライアントに送信します。</p>
+        <p id="usage">
+            ←「Capture」ボタンを押して画面キャプチャ、その後こちらで指示描画後、
+            「Send」を押してクライアントに送信します。
+            &quot;Capture&quot; button with capturing, draw your direction on the captured picture,
+            and &quot;Send&quot; button to send it to the client.
+        </p>
         <div id="canvas_container">
             <canvas id="capture_canvas"
                 onmousedown="startDraw(this,event)"
