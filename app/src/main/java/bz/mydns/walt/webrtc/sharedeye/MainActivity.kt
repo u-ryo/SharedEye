@@ -80,6 +80,6 @@ class MainActivity : Activity() {
         super.onPause()
         activity_main_webview.pauseTimers()
         activity_main_webview.onHide()
-        server!!.stop()
+        server?.stop()
     }
 }
