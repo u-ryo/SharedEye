@@ -21,7 +21,7 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
     fun getUrl() : String {
         val ip = activity.getIp()
         val message = if (ip == "0.0.0.0") {
-            "After connecting to WIFI, \"RESTART\" or using https://appear.in/."
+            "After connecting to WIFI, push \"RESTART\" button below."
         } else {
             "https://" + ip + ":" + activity.port + "/"
         }
@@ -38,7 +38,7 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
     override fun setAnswer(sdp: String) {
         Handler(Looper.getMainLooper()).post {
             activity.activity_main_webview.evaluateJavascript(
-                    "setAnswer(" + sdp + ");makeOffer()", null)
+                    "setAnswer($sdp);makeOffer()", null)
         }
     }
 
@@ -46,7 +46,7 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
         Log.d("imageData:", imageData)
         Handler(Looper.getMainLooper()).post {
             activity.activity_main_webview.evaluateJavascript(
-                    "setImage(\"" + imageData + "\")", null)
+                    "setImage(\"$imageData\")", null)
         }
     }
 
