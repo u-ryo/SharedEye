@@ -44,6 +44,11 @@ class SignalingHttpServer(port: Int, val handler: WebHandler) : NanoHTTPD(port) 
     }
 
     private fun readBody(session: IHTTPSession) : String {
-        return session.inputStream.reader().use { it.readText() }
+        var contentLength =
+                session.headers["content-length"]?.toInt()
+        if (contentLength == null) contentLength = 0
+        val buffer = ByteArray(contentLength)
+        session.inputStream.read(buffer)
+        return String(buffer)
     }
 }
