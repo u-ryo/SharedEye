@@ -21,7 +21,7 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
     fun getUrl() : String {
         val ip = activity.getIp()
         val message = if (ip == "0.0.0.0") {
-            "After connecting to WIFI, push \"RESTART\" button below."
+            "After connecting to WIFI, press \"RESTART\" below."
         } else {
             "https://" + ip + ":" + activity.port + "/"
         }

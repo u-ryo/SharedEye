@@ -85,8 +85,7 @@
 
   // ---------------------- connection handling -----------------------
   function prepareNewConnection() {
-    let pc_config = {"iceServers":[{"urls":"stun:stun.l.google.com:19302"}]};
-    //let pc_config = {"iceServers":[]};
+    let pc_config = {"iceServers":[]};
     let peer = new RTCPeerConnection(pc_config);
 
     // --- on get remote stream ---
