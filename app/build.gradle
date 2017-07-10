@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "bz.mydns.walt.webrtc.sharedeye"
         minSdkVersion 15
@@ -34,28 +34,28 @@ android {
     productFlavors {
         armv7 {
 //            versionCode defaultConfig.versionCode + 2
-            ndk.abiFilters "armeabi-v7a", ""
+            ndk.abiFilters "armeabi-v7a"
         }
         armv7_64 {
-            ndk.abiFilters "armeabi-v7a-64", ""
+            ndk.abiFilters "armeabi-v7a-64"
         }
         x86 {
-            ndk.abiFilters "x86", ""
+            ndk.abiFilters "x86"
         }
         x86_64 {
-            ndk.abiFilters "x86-64", ""
+            ndk.abiFilters "x86-64"
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-//        exclude group: 'com.android.support', module: 'support-annotations'
-//    })
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:25.0.1'
     testCompile 'junit:junit:4.12'
-//    compile files('libs/xwalk_core_library_java.jar')
     compile 'org.xwalk:xwalk_core_library:19.49.514.5'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     def nanohttpdVersion = '2.3.1'
