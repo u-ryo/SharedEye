@@ -10,6 +10,8 @@ import fi.iki.elonen.NanoHTTPD
 import kotlinx.android.synthetic.main.activity_main.activity_main_webview
 
 import org.xwalk.core.XWalkPreferences
+import java.net.Inet4Address
+import java.net.NetworkInterface
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.KeyManagerFactory
@@ -40,11 +42,22 @@ class MainActivity : Activity() {
         val wifiManager =
                 getSystemService(Context.WIFI_SERVICE) as WifiManager
         val ipAddress = wifiManager.connectionInfo.ipAddress
-        return String.format("%d.%d.%d.%d",
-                ipAddress and 0xff,
-                ipAddress shr 8 and 0xff,
-                ipAddress shr 16 and 0xff,
-                ipAddress shr 24 and 0xff)
+        if (ipAddress != 0) {
+            return String.format("%d.%d.%d.%d",
+                    ipAddress and 0xff,
+                    ipAddress shr 8 and 0xff,
+                    ipAddress shr 16 and 0xff,
+                    ipAddress shr 24 and 0xff)
+        }
+        for (networkInterface in NetworkInterface.getNetworkInterfaces()) {
+            for (inetAddress in networkInterface.inetAddresses) {
+                if (!inetAddress.isLoopbackAddress
+                        && inetAddress is Inet4Address) {
+                    return inetAddress.hostAddress
+                }
+            }
+        }
+        return ""
     }
 
     private fun getKeystoreFactory(passphrase: CharArray)
