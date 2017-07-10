@@ -13,24 +13,21 @@
 <body>
 <div id="container">
     <div id="left_container">
-        <button id="captureButton" onclick="captureVideo()">Capture</button>
-        <br/>
-        <p id="reload_caution">
-            いつまでもここにビデオが出ない時は、リロードしてみて下さい。
-            Please reload when the video doesn't start for a long time.
-        </p>
         <div id="video_container">
+            <p id="reload_caution">
+                Please reload when the video doesn't start for a long time.
+            </p>
             <video id="remote_video" autoplay></video>
         </div>
     </div>
     <div id="right_container">
+        <button id="captureButton" onclick="captureVideo()">Capture</button>
         <button id="send_button" onclick="sendImage()">Send</button>
         <br/>
         <p id="usage">
-            ←「Capture」ボタンを押して画面キャプチャ、その後こちらで指示描画後、
-            「Send」を押してクライアントに送信します。
-            &quot;Capture&quot; button with capturing, draw your direction on the captured picture,
-            and &quot;Send&quot; button to send it to the client.
+            &quot;Capture&quot; button for capturing,
+            draw your direction on the captured picture,
+            and &quot;Send&quot; button to send it to the remote.
         </p>
         <div id="canvas_container">
             <canvas id="capture_canvas"
@@ -46,7 +43,6 @@
         </div>
     </div>
 </div>
-</body>
 <script type="text/javascript">
   let remoteVideo = document.getElementById('remote_video');
   let localStream = null;
@@ -77,11 +73,8 @@
       return navigator.mediaDevices.getUserMedia(option);
     } else {
       console.log('wrap navigator.getUserMadia with Promise');
-      return new Promise(function(resolve, reject){
-        navigator.getUserMedia(option,
-          resolve,
-          reject
-        );
+      return new Promise(function(resolve, reject) {
+        navigator.getUserMedia(option, resolve, reject);
       });
     }
   }
@@ -96,7 +89,7 @@
     element.volume = 0.5;
     document.getElementById('reload_caution').style.display = 'none';
 
-    if (remoteVideo.videoWidth > remoteVideo.videoHieght) {
+    if (remoteVideo.videoWidth > remoteVideo.videoHeight) {
       remoteVideo.style.width = '100%';
       remoteVideo.style.height = 'auto';
     } else {
@@ -141,7 +134,7 @@
   function sendSdp(sessionDescription) {
     console.log('---sending sdp ---');
     let message = JSON.stringify(sessionDescription);
-    //console.log('sending SDP=' + message);
+    console.log('sending SDP=' + message);
     sendMessage('/answer', 'application/json', message);
   }
 
@@ -157,7 +150,8 @@
 
   // ---------------------- connection handling -----------------------
   function prepareNewConnection() {
-    let pc_config = {"iceServers":[]};
+    let pc_config = {"iceServers":[{"urls":"stun:stun.l.google.com:19302"}]};
+    //let pc_config = {"iceServers":[]};
     let peer = new RTCPeerConnection(pc_config);
 
     // --- on get remote stream ---
@@ -179,12 +173,12 @@
     peer.onicecandidate = function (evt) {
       if (evt.candidate) {
         console.log(evt.candidate);
-        // Trickle ICE の場合は、ICE candidateを相手に送る
-        // Vanilla ICE の場合には、何もしない
+        // Trickle ICE: Send ICE candidate to remote
+        // Vanilla ICE: Do nothing
       } else {
         console.log('empty ice event');
-        // Trickle ICE の場合は、何もしない
-        // Vanilla ICE の場合には、ICE candidateを含んだSDPを相手に送る
+        // Trickle ICE: Do nothing
+        // Vanilla ICE: Send SDP including ICE candidate
         sendSdp(peer.localDescription);
       }
     };
@@ -243,8 +237,8 @@
       return peerConnection.setLocalDescription(sessionDescription);
     }).then(function() {
       console.log('setLocalDescription() succsess in promise');
-      // -- Trickle ICE の場合は、初期SDPを相手に送る --
-      // -- Vanilla ICE の場合には、まだSDPは送らない --
+      // -- Trickle ICE: Send initial SDP to remote --
+      // -- Vanilla ICE: Not send SDP yet --
       //sendSdp(peerConnection.localDescription);
     }).catch(function(err) {
       console.error(err);
@@ -277,8 +271,8 @@
       return peerConnection.setLocalDescription(sessionDescription);
     }).then(function() {
       console.log('setLocalDescription() succsess in promise');
-      // -- Trickle ICE の場合は、初期SDPを相手に送る --
-      // -- Vanilla ICE の場合には、まだSDPは送らない --
+      // -- Trickle ICE: Send initial SDP to remote --
+      // -- Vanilla ICE: Not send SDP yet --
       //sendSdp(peerConnection.localDescription);
     }).catch(function(err) {
       console.error(err);
@@ -368,4 +362,5 @@
     sendMessage('/image', 'application/x-www-form-urlencoded', image);
   }
 </script>
+</body>
 </html>
