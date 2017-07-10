@@ -31,7 +31,7 @@ class SignalingHttpServer(port: Int, val handler: WebHandler) : NanoHTTPD(port) 
             }
             "/image" -> {
                 val imageData = readBody(session)
-                Log.d("imagedata:", imageData)
+                Log.d("imageData:", imageData)
                 handler.setImage(imageData)
                 return NanoHTTPD.newChunkedResponse(
                         Response.Status.NO_CONTENT,
@@ -44,20 +44,6 @@ class SignalingHttpServer(port: Int, val handler: WebHandler) : NanoHTTPD(port) 
     }
 
     private fun readBody(session: IHTTPSession) : String {
-        var contentLength =
-                session.headers["content-length"]?.toInt()
-        if (contentLength == null) contentLength = 0
-        val b = ByteArray(10240)
-        var readBytes = session.inputStream.read(b, 0,
-                Math.min(b.size, contentLength))
-        var result = ""
-        while (readBytes > 0) {
-            result += String(b, 0, readBytes)
-            contentLength -= readBytes
-            readBytes = session.inputStream.read(
-                    b, 0, Math.min(b.size, contentLength))
-        }
-        result += String(b, 0, readBytes)
-        return result
+        return session.inputStream.reader().use { it.readText() }
     }
 }
