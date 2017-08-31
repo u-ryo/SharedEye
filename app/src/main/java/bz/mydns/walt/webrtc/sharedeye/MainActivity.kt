@@ -10,8 +10,6 @@ import fi.iki.elonen.NanoHTTPD
 import kotlinx.android.synthetic.main.activity_main.activity_main_webview
 
 import org.xwalk.core.XWalkPreferences
-import java.net.Inet4Address
-import java.net.NetworkInterface
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.KeyManagerFactory
@@ -67,10 +65,10 @@ class MainActivity : Activity() {
             activity_main_webview.onShow()
             server?.start(timeout, false)
         } else {
-            val factory = getKeystoreFactory(BuildConfig.PASSWORD.toCharArray())
             object : AsyncTask<Unit, Unit, Unit>() {
                 override fun doInBackground(vararg p0: Unit?) {
                     server = SignalingHttpServer(port, handler)
+                    val factory = getKeystoreFactory(BuildConfig.PASSWORD.toCharArray())
                     server?.makeSecure(factory, null)
                     server?.start(timeout, false)
                 }

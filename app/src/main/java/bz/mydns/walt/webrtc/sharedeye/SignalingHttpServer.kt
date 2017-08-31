@@ -49,6 +49,8 @@ class SignalingHttpServer(port: Int, val handler: WebHandler) : NanoHTTPD(port) 
         if (contentLength == null) contentLength = 0
         val buffer = ByteArray(contentLength)
         session.inputStream.read(buffer)
+        Log.d("contentLength:", String.format("%d", contentLength))
+        Log.d("contents:", String(buffer))
         return String(buffer)
     }
 }
