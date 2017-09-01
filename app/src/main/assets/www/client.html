@@ -23,6 +23,9 @@
     <div id="right_container">
         <button id="captureButton" onclick="captureVideo()">Capture</button>
         <button id="send_button" onclick="sendImage()">Send</button>
+        <button id="remote_video_button" onclick="directRemoteVideo(this)" style="display:none;">
+            Remote Video Start
+        </button>
         <br/>
         <p id="usage">
             &quot;Capture&quot; button for capturing,
@@ -47,6 +50,7 @@
   let remoteVideo = document.getElementById('remote_video');
   let localStream = null;
   let peerConnection = null;
+  let remoteVideoButton = document.getElementById('remote_video_button');
 
   // --- prefix -----
   navigator.getUserMedia  = navigator.getUserMedia    || navigator.webkitGetUserMedia ||
@@ -320,6 +324,7 @@
     canvas.height = video.videoHeight;
     return ctx.drawImage(video, 0, 0);
   }
+
   var startDraw = function(canvas, e) {
     e.preventDefault();
     e.stopPropagation();
@@ -329,6 +334,7 @@
     sy = e.pageY - canvas.offsetTop;
     return false;
   }
+
   var draw = function(canvas, e) {
     var ctx, ex, ey;
     e.preventDefault();
@@ -350,15 +356,37 @@
     }
     return false;
   }
+
   var finishDraw = function(e) {
     e.preventDefault();
     e.stopPropagation();
     drawing = false;
     return false;
   }
+
   var sendImage = function() {
+    if (remoteVideoButton.style.display === 'none') {
+      remoteVideoButton.style.display = 'inline-block';
+      remoteVideoButton.innerText = 'Remote Video Start'
+    }
     var image = canvas.toDataURL('image/png');
     sendMessage('/image', 'application/x-www-form-urlencoded', image);
+  }
+
+  var directRemoteVideo = function() {
+    if (remoteVideoButton.innerText === 'Remote Video Start') {
+      sendRemoteVideoDirection('/startLocalVideo');
+      remoteVideoButton.innerText = 'Remote Video Stop';
+    } else if (remoteVideoButton.innerText === 'Remote Video Stop') {
+      sendRemoteVideoDirection('/stopLocalVideo');
+      remoteVideoButton.innerText = 'Remote Video Start';
+    }
+  }
+
+  var sendRemoteVideoDirection = function(direction) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', direction);
+    xhr.send();
   }
 </script>
 </body>

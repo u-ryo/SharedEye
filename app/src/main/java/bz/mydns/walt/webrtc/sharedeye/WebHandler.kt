@@ -9,4 +9,6 @@ interface WebHandler {
     fun setImage(imageData: String)
     fun getIp() : String
     fun getFile(name: String) : String
+    fun startLocalVideo()
+    fun stopLocalVideo()
 }

@@ -14,7 +14,7 @@
 </head>
 <body id="body">
 <audio id="remote_video" autoplay></audio>
-<video id="local_video" autoplay></video>
+<video id="local_video" autoplay style="display:none;"></video>
 <div id="display_URL">
     <p id="prologue">Please access to:</p>
     <p id="url"></p>
@@ -60,9 +60,18 @@
   }
 
   function startLocalVideo() {
+    console.log('startLocalVideo was called.');
+    console.log(localStream);
     if (localStream != null) {
+      localVideo.style.display = 'block';
       playVideo(localVideo, localStream, 0);
     }
+  }
+
+  // stop local video
+  function stopLocalVideo() {
+    console.log('stopLocalVideo was called.');
+    localVideo.style.display = 'none';
   }
 
   function sendSdp(sessionDescription) {
@@ -93,13 +102,13 @@
       peer.ontrack = function(event) {
         console.log('-- peer.ontrack()');
         let stream = event.streams[0];
-        playVideo(remoteVideo, stream, 0.5);
+        playVideo(remoteVideo, stream, 0.8);
       };
     } else {
       peer.onaddstream = function(event) {
         console.log('-- peer.onaddstream()');
         let stream = event.stream;
-        playVideo(remoteVideo, stream, 0.5);
+        playVideo(remoteVideo, stream, 0.8);
       };
     }
 
@@ -185,7 +194,7 @@
     console.log(sessionDescription);
     peerConnection.setRemoteDescription(sessionDescription);
 
-    //startLocalVideo();
+    startLocalVideo();
   }
 
   function displayURL() {
@@ -201,6 +210,7 @@
 
   function setImage(imageData) {
     document.getElementById('display_URL').style.display = 'none';
+    stopLocalVideo();
     let image = document.getElementById('image');
     image.style.display = 'inline';
     let body = document.getElementById('body');

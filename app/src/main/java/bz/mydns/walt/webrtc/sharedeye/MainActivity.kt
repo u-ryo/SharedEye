@@ -11,13 +11,14 @@ import kotlinx.android.synthetic.main.activity_main.activity_main_webview
 
 import org.xwalk.core.XWalkPreferences
 import java.security.KeyStore
+import java.util.Random
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLServerSocketFactory
 
 class MainActivity : Activity() {
     lateinit var formattedIpAddress: String
-    val port = BuildConfig.PORT
+    val port = Random().nextInt(10000) + 1024
     val timeout = TimeUnit.SECONDS.toMillis(BuildConfig.TIMEOUT).toInt()
     var server: NanoHTTPD? = null
     lateinit var handler : WebHandler

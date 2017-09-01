@@ -59,4 +59,20 @@ class WebHandlerImpl(val activity: MainActivity) : WebHandler {
                 .reader(Charsets.UTF_8)
                 .readText()
     }
+
+    override fun startLocalVideo() {
+        Log.d("WebHandlerImpl", "startLocalVideo called.")
+        Handler(Looper.getMainLooper()).post {
+            activity.activity_main_webview
+                    .evaluateJavascript("startLocalVideo()", null)
+        }
+    }
+
+    override fun stopLocalVideo() {
+        Log.d("WebHandlerImpl", "stopLocalVideo called.")
+        Handler(Looper.getMainLooper()).post {
+            activity.activity_main_webview
+                    .evaluateJavascript("stopLocalVideo()", null)
+        }
+    }
 }
