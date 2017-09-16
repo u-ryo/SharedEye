@@ -365,10 +365,8 @@
   }
 
   var sendImage = function() {
-    if (remoteVideoButton.style.display === 'none') {
-      remoteVideoButton.style.display = 'inline-block';
-      remoteVideoButton.innerText = 'Remote Video Start'
-    }
+    remoteVideoButton.style.display = 'inline-block';
+    remoteVideoButton.innerText = 'Remote Video Start'
     var image = canvas.toDataURL('image/png');
     sendMessage('/image', 'application/x-www-form-urlencoded', image);
   }
