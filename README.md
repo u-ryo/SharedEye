@@ -62,3 +62,7 @@ If you are off from WiFi, you'll see such a message "After connecting to WIFI, p
 As the message says, please connect to WiFi and after that push "RESTART" button, then you'll see the URL to be connected.  
 <!-- ![no_wifi](https://user-images.githubusercontent.com/12380403/30557007-db171530-9ce7-11e7-8c96-2362ad135042.png) -->
 ![no wifi](https://raw.githubusercontent.com/wiki/u-ryo/SharedEye/images/no_wifi.png "No Wifi")
+
+
+## Why do you use the old version of xwalk?
+Because I had to use it on Vuzix M100(Android 4.0.4) first.
