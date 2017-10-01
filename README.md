@@ -12,6 +12,12 @@ If you want to use the app through 3G/4G, you can use [Appear.in](https://appear
 ## Caution
 The device can be too hot because the camera is always on.
 
+## Download(Version 0.1) APK
+* [armv7](https://raw.githubusercontent.com/wiki/u-ryo/SharedEye/apk/SharedEye-armv7-release.apk)
+* [armv7-64](https://raw.githubusercontent.com/wiki/u-ryo/SharedEye/apk/SharedEye-armv7_64-release.apk)
+* [x86](https://raw.githubusercontent.com/wiki/u-ryo/SharedEye/apk/SharedEye-x86-release.apk)
+* [x86-64](https://raw.githubusercontent.com/wiki/u-ryo/SharedEye/apk/SharedEye-x86_64-release.apk)
+
 ## Basic Use Case
 <!-- ![usecase1](https://user-images.githubusercontent.com/12380403/30556048-7a063a62-9ce4-11e7-8766-53d80b4816e2.png "You can see the view through the Smart Glasses on the remote PC WWW browser.") -->
 ![Use Case1](https://raw.githubusercontent.com/wiki/u-ryo/SharedEye/images/usecase1.png  "You can see the view through the Smart Glasses on the remote PC WWW browser.")  
