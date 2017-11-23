@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "bz.mydns.walt.webrtc.sharedeye"
         minSdkVersion 15
@@ -31,6 +31,7 @@ android {
         buildConfigField "String", "PASSWORD", "${password}"
     }
 
+    flavorDimensions 'default'
     productFlavors {
         armv7 {
 //            versionCode defaultConfig.versionCode + 2
