@@ -1,7 +1,7 @@
 # SharedEye
 ## What's this?
 One way WebRTC Android App including a signaling server.
-This app is especially targetting to <span style="color:red">Smart Glasses</span> (arm/x86)(like [Vuzix M100](www.vuzix.com/Products/m100-smart-glasses), [M300](https://www.vuzix.com/Products/m300-smart-glasses), [Epson Moverio BT-300, BT-350](epson.com/moverio-augmented-reality), etc.).
+This app is especially targetting to <span style="color:red">Smart Glasses</span> (arm/x86)(like [Vuzix M100](www.vuzix.com/Products/m100-smart-glasses), [M300](https://www.vuzix.com/Products/m300-smart-glasses), [Epson Moverio BT-300, BT-350](https://epson.com/moverio-augmented-reality), etc.).
 So there's no need to operate on Android App.
 Run the App on Android, access to the URL from a remote WWW browser,
 and share the vision of the glasses on the remote browser.
