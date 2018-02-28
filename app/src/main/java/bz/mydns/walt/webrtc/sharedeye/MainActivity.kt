@@ -29,8 +29,8 @@ class MainActivity : Activity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true)
-        activity_main_webview.load(
-                "file:///android_asset/www/broadcaster.html", null)
+        activity_main_webview.loadUrl(
+                "file:///android_asset/www/broadcaster.html")
         handler = WebHandlerImpl(this)
         activity_main_webview.addJavascriptInterface(handler, "handler")
 
@@ -39,7 +39,7 @@ class MainActivity : Activity() {
 
     fun getIp() : String {
         val wifiManager =
-                getSystemService(Context.WIFI_SERVICE) as WifiManager
+                application.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val ipAddress = wifiManager.connectionInfo.ipAddress
         return String.format("%d.%d.%d.%d",
                 ipAddress and 0xff,
