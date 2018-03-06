@@ -1,6 +1,5 @@
 package bz.mydns.walt.webrtc.sharedeye
 
-import android.app.Activity
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.AsyncTask
@@ -8,6 +7,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.android.synthetic.main.activity_main.activity_main_webview
+import org.xwalk.core.XWalkActivity
 
 import org.xwalk.core.XWalkPreferences
 import java.security.KeyStore
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLServerSocketFactory
 
-class MainActivity : Activity() {
+class MainActivity : XWalkActivity() {
     lateinit var formattedIpAddress: String
     val port = Random().nextInt(10000) + 1024
     val timeout = TimeUnit.SECONDS.toMillis(BuildConfig.TIMEOUT).toInt()
@@ -29,12 +29,15 @@ class MainActivity : Activity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         XWalkPreferences.setValue(XWalkPreferences.REMOTE_DEBUGGING, true)
-        activity_main_webview.loadUrl(
-                "file:///android_asset/www/broadcaster.html")
         handler = WebHandlerImpl(this)
         activity_main_webview.addJavascriptInterface(handler, "handler")
 
         formattedIpAddress = getIp()
+    }
+
+    override fun onXWalkReady() {
+        activity_main_webview.loadUrl(
+                "file:///android_asset/www/broadcaster.html")
     }
 
     fun getIp() : String {
